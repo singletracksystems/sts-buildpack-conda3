@@ -93,4 +93,4 @@ ENV_BIN_DIR="${ENV_ROOT_DIR}/bin"
 
 echo "-----> Creating environment '${ENV_NAME}'"
 conda env create --quiet --file $CONDA_REQUIREMENTS_FILE --name $ENV_NAME | indent
-${ENV_BIN_DIR}/python setup.py develop
+#${ENV_BIN_DIR}/python setup.py develop

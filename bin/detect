@@ -7,9 +7,9 @@
 #   Location of the app (root dir of git repo e.g. /app).
 BUILD_DIR=$1
 
-#   Ensure the source repository specifies a dependency file for the conda environment.
-if [ ! -f "${BUILD_DIR}/environment.yml" ]; then
-    exit 1
+#   Check to see if this is a supportable Python repository.
+if [ ! -f ${BUILD_DIR}/environment.yml ] && [ ! -f $BUILD_DIR/setup.py ]; then
+  exit 1
 fi
 
-echo 'Python/conda'
+echo 'Python'
