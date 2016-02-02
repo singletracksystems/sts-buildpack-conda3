@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+#
+#   Perform the transformation steps for this Heroku app.
+#
+#   Reference: https://devcenter.heroku.com/articles/buildpack-api
+
+#   Debugging.
+#set -x
+
+#   Fail on error.
+set -eo pipefail
+
+echo '-----> Starting bin/compile'
+
+#   Location of the app (root dir of git repo e.g. /app).
+BUILD_DIR=$1
+
+#   Location for build artifacts stored between builds.
+CACHE_DIR=$2
+
+#   Contains a file for each of the app's config variables.
+ENV_DIR=$3
+
+function indent() {
+  sed -u 's/^/       /'
+}
+
+echo "BUILD_DIR: ${BUILD_DIR}" | indent
+echo "CACHE_DIR: ${CACHE_DIR}" | indent
+echo "ENV_DIR: ${ENV_DIR}" | indent
+
+CONDA_REQUIREMENTS_FILE="${BUILD_DIR}/environment.yml"
+
+function export_env_dir() {
+    env_dir=$1
+    if [ -d "$env_dir" ]; then
+        for name in $(ls $env_dir); do
+            echo "$name"
+            export "$name=$(cat $env_dir/$name)"
+        done
+    fi
+}
+#export_env_dir $ENV_DIR
+
+#   Paths.
+BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+ROOT_DIR=$(dirname $BIN_DIR)
+VENDOR_DIR="${ROOT_DIR}/vendor"
+
+echo "BIN_DIR: ${BIN_DIR}" | indent
+echo "ROOT_DIR: ${ROOT_DIR}" | indent
+echo "VENDOR_DIR: ${VENDOR_DIR}" | indent
+
+if [ ! -s "$CONDA_REQUIREMENTS_FILE" ]; then
+    echo "conda requirements was empty"
+    exit 1
+fi | indent
+
+CONDA_INSTALLER="${VENDOR_DIR}/miniconda_linux-x86_64.sh"
+echo "CONDA_INSTALLER: ${CONDA_INSTALLER}" | indent
+
+if [ ! -f "$CONDA_INSTALLER" ]; then
+    echo "Conda installer not found!"
+    exit 1
+fi | indent
+
+echo "-----> Installing conda"
+
+CONDA_ROOT_DIR="${BUILD_DIR}/miniconda"
+CONDA_BIN_DIR="${CONDA_ROOT_DIR}/bin"
+
+if [ -d "$CONDA_ROOT_DIR" ]; then
+    CWD=$(pwd)
+    cd $(dirname $CONDA_ROOT_DIR)
+    rm -rf miniconda
+    cd $CWD
+fi | indent
+
+bash ${VENDOR_DIR}/miniconda_linux-x86_64.sh -b -p ${BUILD_DIR}/miniconda 2>&1 | indent
+
+echo "checking for updates" | indent
+
+export PATH=${CONDA_BIN_DIR}:$PATH
+
+conda update conda --yes --quiet | indent
+
+CONDA_VERSION=$(conda -V 2>&1)
+echo "${CONDA_VERSION} installed" | indent
+
+ENV_NAME='singletrack'
+ENV_ROOT_DIR="${CONDA_ROOT_DIR}/envs/${ENV_NAME}"
+ENV_BIN_DIR="${ENV_ROOT_DIR}/bin"
+
+echo "-----> Creating environment '${ENV_NAME}'"
+conda env create --quiet --file $CONDA_REQUIREMENTS_FILE --name $ENV_NAME | indent
+${ENV_BIN_DIR}/python setup.py develop

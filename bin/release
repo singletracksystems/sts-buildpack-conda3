@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+#   Provide metadata back to the runtime. Output should be in YAML format.
+#
+#   Reference: https://devcenter.heroku.com/articles/buildpack-api
+
+#   Location of the app (root dir of git repo e.g. /app).
+BUILD_DIR=$1
+
+cat << EOF
+---
+addons:
+  - heroku-postgresql
+  - heroku-redis
+default_process_types:
+  web: gunicorn wsgi
+EOF

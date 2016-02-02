@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+#   Determine if this buildpack can be applied to this Heroku app.
+#
+#   Reference: https://devcenter.heroku.com/articles/buildpack-api
+
+#   Location of the app (root dir of git repo e.g. /app).
+BUILD_DIR=$1
+
+#   Ensure the source repository specifies a dependency file for the conda environment.
+if [ ! -f "${BUILD_DIR}/environment.yml" ]; then
+    exit 1
+fi
+
+echo 'Python/conda'
