@@ -9,9 +9,8 @@ BUILD_DIR=$1
 
 cat << EOF
 ---
-addons:
-  - heroku-postgresql
-  - heroku-redis
+config_vars:
+  PATH: /app/miniconda/bin:/usr/bin:/bin
 default_process_types:
   web: gunicorn wsgi
 EOF
