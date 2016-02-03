@@ -130,12 +130,11 @@ conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | ind
 
 section "build summary"
 
-source activate ${ENV_NAME}
+#source ${CONDA_BIN_DIR}/activate ${ENV_NAME}
 echo "Python executable:"$(which python) | indent
-echo "Version: "$(python -V) | indent
-echo "Packages:" | indent
+echo "Version: "$(python -V 2>&1) | indent
 conda list | indent
-source deactivate
+#source ${CONDA_BIN_DIR}/deactivate
 
 section "cleaning up conda caches"
 
