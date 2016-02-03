@@ -60,7 +60,6 @@ ENV_DIR=$3
 #   Introduce configuration settings to environment.
 #DISABLED:export_env_dir $ENV_DIR
 
-#   Configuration settings.
 VENDOR_DIR="${CACHE_DIR}/vendor"
 CONDA_INSTALLER="${VENDOR_DIR}/miniconda_linux-x86_64.sh"
 APP_ROOT_DIR='/app'
@@ -68,14 +67,15 @@ CONDA_ENV_SETUP_FILE="${BUILD_DIR}/environment.yml"
 CONDA_ROOT_DIR="${APP_ROOT_DIR}/miniconda"
 CONDA_BIN_DIR="${CONDA_ROOT_DIR}/bin"
 ENV_NAME='root'
-ENV_ROOT_DIR="${CONDA_ROOT_DIR}/envs/${ENV_NAME}"
-ENV_BIN_DIR="${ENV_ROOT_DIR}/bin"
 
 #   Add conda to path.
 export PATH=${CONDA_BIN_DIR}:$PATH
 
-#   Display configuration.
-echo "environment:" | indent
+section "checking setup"
+
+echo "shell aliases" | indent
+alias | indent
+echo "script variables" | indent
 echo
 ( set -o posix ; set ) | egrep '^.*_(DIR|FILE|NAME|INSTALLER)=' | indent
 
@@ -128,9 +128,12 @@ conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | ind
 
 section "linking application sources"
 
+source ${CONDA_BIN_DIR}/activate ${ENV_NAME}
+echo "PATH: ${PATH}"
 python -V | indent
 echo "Python executable :"$(which python) | indent
 python setup.py develop | indent
+source ${CONDA_BIN_DIR}/deactivate
 
 section "cleaning up conda caches"
 
@@ -138,7 +141,7 @@ conda clean --yes --tarballs --index-cache --packages --source-cache | indent
 
 section "relocating conda directory to build area"
 
-rmtree "${BUILD_DIR}/miniconda"
+rmtree ${BUILD_DIR}/miniconda
 echo "moving built conda parent directory to build area"
 mv -v ${CONDA_ROOT_DIR} ${BUILD_DIR} | indent
 
