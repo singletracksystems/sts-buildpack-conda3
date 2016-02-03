@@ -1,4 +1,4 @@
-# singletrack-buildpack-python
+# sts-buildpack-conda
 
 A custom Heroku buildpack for Python that uses conda by Continuum Analytics.
 
