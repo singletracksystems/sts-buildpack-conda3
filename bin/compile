@@ -9,8 +9,11 @@
 #   Debugging.
 #DISABLED:set -x
 
-#   Fail on error.
-set -eo pipefail
+#   Configure environment.
+set -o errexit    # always exit on error
+set -o pipefail   # don't ignore exit codes when piping output
+set -o nounset    # fail on unset variables
+unset GIT_DIR     # Avoid GIT_DIR leak from previous build steps
 
 #   Display a section header.
 function section() {
@@ -45,17 +48,16 @@ function export_env_dir() {
 section "running build"
 
 #   Script paths.
-BUILDPACK_BIN_DIR=$(cd $(dirname $0); pwd)
-BUILDPACK_ROOT_DIR=$(dirname ${BUILDPACK_BIN_DIR})
+BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 
 #   Build path (directory contents will form the home directory on the deployed app).
-BUILD_DIR=$1
+BUILD_DIR=${1:-}
 
 #   Location for build artifacts (will be persisted between builds).
-CACHE_DIR=$2
+CACHE_DIR=${2:-}
 
 #   Directory containing a file for each of the app's configuration variables.
-ENV_DIR=$3
+ENV_DIR=${3:-}
 
 #   Introduce configuration settings to environment.
 #DISABLED:export_env_dir $ENV_DIR
@@ -94,7 +96,7 @@ fi | indent
 
 if [ ! -f "${CONDA_INSTALLER}" ]; then
     echo "transferring conda installer to cache"
-    cp -Rv ${BUILDPACK_ROOT_DIR}/vendor/$(basename ${CONDA_INSTALLER}) ${VENDOR_DIR}
+    cp -Rv ${BP_DIR}/vendor/$(basename ${CONDA_INSTALLER}) ${VENDOR_DIR}
 fi | indent
 
 section "installing conda"
@@ -126,14 +128,14 @@ section "installing packages into ${ENV_NAME} environment"
 
 conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | indent
 
-section "linking application sources"
+section "build summary"
 
-source ${CONDA_BIN_DIR}/activate ${ENV_NAME}
-echo "PATH: ${PATH}"
-python -V | indent
-echo "Python executable :"$(which python) | indent
-python setup.py develop | indent
-source ${CONDA_BIN_DIR}/deactivate
+source activate ${ENV_NAME}
+echo "Python executable:"$(which python) | indent
+echo "Version: "$(python -V) | indent
+echo "Packages:" | indent
+conda list | indent
+source deactivate
 
 section "cleaning up conda caches"
 
