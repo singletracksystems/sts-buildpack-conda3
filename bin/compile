@@ -126,6 +126,12 @@ section "installing packages into ${ENV_NAME} environment"
 
 conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | indent
 
+section "linking application sources"
+
+python -V | indent
+echo "Python executable :"$(which python) | indent
+python setup.py develop | indent
+
 section "cleaning up conda caches"
 
 conda clean --yes --tarballs --index-cache --packages --source-cache | indent
@@ -135,11 +141,5 @@ section "relocating conda directory to build area"
 rmtree "${BUILD_DIR}/miniconda"
 echo "moving built conda parent directory to build area"
 mv -v ${CONDA_ROOT_DIR} ${BUILD_DIR} | indent
-
-section "linking application sources"
-
-python -V | indent
-echo "Python executable :"$(which python) | indent
-python setup.py develop | indent
 
 section "build completed"
