@@ -1,8 +1,9 @@
-.PHONY: default
+.PHONY: default test
 
 default:
 	@echo 'usage: make <target>'
 	@echo
+	@echo 'make test'
 	@echo 'make vendor_update'
 	@echo 'make vagrant_setup'
 	@echo '...'
@@ -23,6 +24,14 @@ vagrant_setup:
 	sudo locale-gen en_GB.UTF-8
 	sudo apt-get -y install git
 	sudo apt-get -y install libpq-dev
+	sudo mkdir /app && chown vagrant:vagrant /app
+	sudo mkdir /app/cache && chown vagrant:vagrant /app/cache
+	sudo mkdir /app/env && chown vagrant:vagrant /app/env
 
-vagrant start:
+vagrant_start:
 	vagrant up && vagrant ssh
+
+test:
+	bash bin/detect /tmp
+	bash bin/compile /tmp /app/cache /app/env
+	bash bin/release /tmp
