@@ -2,6 +2,8 @@
 #
 #   Determine if this buildpack can be applied to this Heroku app.
 #
+#   usage: bin/detect /tmp/build
+#
 #   Reference: https://devcenter.heroku.com/articles/buildpack-api
 
 #   Location of the app (root dir of git repo e.g. /app).
@@ -12,4 +14,4 @@ if [ ! -f ${BUILD_DIR}/environment.yml ] && [ ! -f $BUILD_DIR/setup.py ]; then
   exit 1
 fi
 
-echo 'Python'
+echo 'Python/conda'
