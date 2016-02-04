@@ -1,5 +1,8 @@
 .PHONY: default test
 
+VENDOR_DIR = .vendor
+CONDA_URL = http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+
 default:
 	@echo 'usage: make <target>'
 	@echo
@@ -8,11 +11,14 @@ default:
 	@echo 'make vagrant_setup'
 	@echo '...'
 
+vendor_clean:
+	@echo 'cleaning up vendor binaries'
+	cd $(VENDOR_DIR) && rm *.sh
+
 vendor_update:
-	@echo 'refreshing conda installer'
-	@echo
-	mkdir -p vendor
-	wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O vendor/miniconda_linux-x86_64.sh
+	@echo 'downloading latest vendor binaries'
+	mkdir -p $(VENDOR_DIR)
+	cd $(VENDOR_DIR) && wget -N $(CONDA_URL)
 
 vagrant_reset:
 	vagrant destroy --force && vagrant up

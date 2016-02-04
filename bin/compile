@@ -63,7 +63,7 @@ ENV_DIR=${3:-}
 #DISABLED:export_env_dir $ENV_DIR
 
 VENDOR_DIR="${CACHE_DIR}/vendor"
-CONDA_INSTALLER="${VENDOR_DIR}/miniconda_linux-x86_64.sh"
+CONDA_INSTALLER="${VENDOR_DIR}/Miniconda-latest-Linux-x86_64.sh"
 APP_ROOT_DIR='/app'
 CONDA_ENV_SETUP_FILE="${BUILD_DIR}/environment.yml"
 CONDA_ROOT_DIR="${APP_ROOT_DIR}/miniconda"
