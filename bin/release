@@ -8,11 +8,3 @@
 
 #   Location of the app (root dir of git repo e.g. /app).
 BUILD_DIR=$1
-
-cat << EOF
----
-config_vars:
-  PATH: /app/miniconda/bin:/usr/bin:/bin
-default_process_types:
-  web: gunicorn wsgi
-EOF
