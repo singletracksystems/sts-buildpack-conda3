@@ -112,13 +112,6 @@ bash ${CONDA_INSTALLER} -b -p ${CONDA_ROOT_DIR} 2>&1 | indent
 
 echo $(conda -V 2>&1)" installed" | indent
 
-section "checking for conda updates"
-
-#   Make sure conda is on the latest version available.
-conda update conda --yes --quiet | indent
-
-echo "updated to " $(conda -V 2>&1) | indent
-
 section "installing conda helper packages"
 
 #   Required to enable the 'conda clean' command.
