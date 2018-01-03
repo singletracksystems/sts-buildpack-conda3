@@ -1,7 +1,7 @@
 .PHONY: default test
 
 VENDOR_DIR = vendor
-CONDA_URL = http://repo.continuum.io/miniconda/Miniconda2-4.2.12-Linux-x86_64.sh
+CONDA_URL = http://repo.continuum.io/miniconda/Miniconda2-4.3.30.1-MacOSX-x86_64.sh
 
 default:
 	@echo 'usage: make <target>'
