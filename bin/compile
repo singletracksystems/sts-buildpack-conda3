@@ -112,14 +112,14 @@ bash ${CONDA_INSTALLER} -b -p ${CONDA_ROOT_DIR} 2>&1 | indent
 
 echo $(conda -V 2>&1)" installed" | indent
 
+section "installing packages into ${ENV_NAME} environment"
+
+conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | indent
+
 section "installing conda helper packages"
 
 #   Required to enable the 'conda clean' command.
 conda install --yes --quiet conda-build | indent
-
-section "installing packages into ${ENV_NAME} environment"
-
-conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | indent
 
 section "build summary"
 
