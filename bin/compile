@@ -119,7 +119,7 @@ conda install --yes --quiet conda-build | indent
 
 section "installing packages into ${ENV_NAME} environment"
 
-conda env update --quiet --name ${ENV_NAME} --file ${CONDA_ENV_SETUP_FILE} | indent
+conda env update --quiet --file ${CONDA_ENV_SETUP_FILE} | indent
 
 section "build summary"
 
