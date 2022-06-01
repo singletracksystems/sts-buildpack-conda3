@@ -131,7 +131,7 @@ conda list | indent
 
 section "cleaning up conda caches"
 
-conda clean --yes --tarballs --index-cache --packages --source-cache | indent
+conda clean --yes --tarballs --index-cache --packages | indent
 
 section "relocating conda directory to build area"
 
